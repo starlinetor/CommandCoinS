@@ -7,7 +7,9 @@ parser = argparse.ArgumentParser(
     )
 
 #basic debug argument to check entered arguments
-parser.add_argument('-pa', '--print_arguments', help = 'prints all entered arguemnts')
+parser.add_argument('-pa', '--print_arguments',
+                    action='store_true', 
+                    help = 'prints all entered arguemnts')
 
 #init subparser
 subparser = parser.add_subparsers(help="")
@@ -15,8 +17,7 @@ subparser = parser.add_subparsers(help="")
 parser_test = subparser.add_parser('test')
 parser_setup = subparser.add_parser('setup')
 
-arguments = parser._get_args()
-sub_arguments = subparser._get_args()
+arguments = parser.parse_args()
 
-print("arguments : " + str(arguments))
-print("sub_arguments : " + str(sub_arguments))
+if arguments.print_arguments:
+    print("arguments : " + str(arguments))
