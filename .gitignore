@@ -1,5 +1,6 @@
 #private project files
 settings.db
+CommandCoin$.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

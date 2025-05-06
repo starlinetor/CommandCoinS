@@ -10,14 +10,14 @@ def setup() -> None:
     pass
 
 @setup.command()
-@click.option('-d','--directory', required=True, help='Directory for database')
+@click.option('-d','--directory', default=str(Path(__file__).parents[2] / "data"), help='Directory for database')
 @click.option('-w','--wipe', default=False, type = bool, help='Wipes old settings file') 
 def basic(directory:str, wipe:bool) -> None:
     """Basic setup for command coin. It will save the database directory and the current date.
     The current date is used as a starting point for the data. 
     """
     #get settings file directory
-    settings_dir : str = Path(__file__).parents[2] / "settings.db"
+    settings_dir : str = Path(__file__).parents[2] / "data\\settings.db"
     database_dir : str = directory+"\\CommandCoin$.db"
     
     #delete save file if needed
