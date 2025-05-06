@@ -1,10 +1,7 @@
 import os
-import random
 import sqlite3
-import json
 import click
 from datetime import date
-from io import TextIOWrapper
 from pathlib import Path
 
 @click.group()
