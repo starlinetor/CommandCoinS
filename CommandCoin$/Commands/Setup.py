@@ -15,12 +15,15 @@ def setup() -> None:
 @setup.command()
 @click.option('-d','--directory', default=str(Path(__file__).parents[2] / "data"), help='Directory for database')
 @click.option('-w','--wipe', default=False, type = bool, help='Wipes old settings file') 
-@click.option('-u','--update_date', default=False, type = bool, help='Update starting date') 
+@click.option('-u','--update_date', default=True, type = bool, help='Update starting date') 
 def basic(directory:str, wipe:bool, update_date:bool) -> None:
     """
     Basic setup for command coin. It will save the database directory and the current date.\n
     The current date is used as the starting date for all expenses. 
     """
+    
+    #TODO this problably needs some polishing
+    
     #get settings file directory
     database_dir : str = directory+"\\CommandCoin$.db"
     
@@ -38,6 +41,8 @@ def basic(directory:str, wipe:bool, update_date:bool) -> None:
                 ('database_dir','{database_dir}')
                 """)
     #update if asked the starting date
+    #TODO this does not make sence, you always want to have a date so check if is already present
+    #TODO arguably i don't even know why i need a starting date 
     if update_date:
         cur.execute(f"""INSERT OR REPLACE INTO settings VALUES  
                 ('start_date','{str(date.today())}')
@@ -45,3 +50,10 @@ def basic(directory:str, wipe:bool, update_date:bool) -> None:
     settings.commit()
     #create database
     sqlite3.connect(database_dir)
+
+@setup.command()
+@click.option('-w','--wipe', default=False, type = bool, help='Wipes old settings file') 
+def accounts():
+    #TODO this should create a basic table that stores each account info
+    #name, id (i think is better if each table for each account is named after the id and not the actual name)
+    pass
