@@ -1,4 +1,5 @@
 import click
+import Commands.Utils.SQL  as SQL
 
 @click.group()
 def tester() -> None:
@@ -20,3 +21,17 @@ def print_test() -> None:
     
     click.echo("\n".join(string))
     click.echo("Font credits : https://github.com/Marak/asciimo/blob/master/fonts/Graffiti.flf")
+
+
+
+#tests related to sql
+@tester.group()
+def sql() -> None:
+    """SQL tests"""
+    pass
+
+@sql.command()
+@click.argument('key')
+def get_settings(key : str):
+    """Returns the value of a setting"""
+    print(SQL.get_setting(key))

@@ -5,7 +5,7 @@ from datetime import date
 from pathlib import Path
 
 #settings location
-settings_dir : str = Path(__file__).parents[2] / "data\\settings.db"
+from Commands.Utils.SQL import settings_dir
 
 @click.group()
 def setup() -> None:

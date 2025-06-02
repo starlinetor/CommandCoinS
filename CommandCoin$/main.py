@@ -1,4 +1,5 @@
 import click
+from pathlib import Path
 from Commands.Tester import tester
 from Commands.Setup import setup
 from Commands.Wallets import wallet

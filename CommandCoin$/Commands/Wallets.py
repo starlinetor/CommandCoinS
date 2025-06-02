@@ -1,9 +1,6 @@
 import click
 from pathlib import Path
 
-#settings location
-settings_dir : str = Path(__file__).parents[2] / "data\\settings.db"
-
 @click.group()
 def wallet() -> None:
     """
@@ -15,4 +12,5 @@ def wallet() -> None:
 
 @wallet.command()
 def create() -> None:
+    "WIP"
     pass
