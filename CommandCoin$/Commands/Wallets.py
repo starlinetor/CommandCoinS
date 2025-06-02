@@ -1,13 +1,18 @@
 import click
 from pathlib import Path
 
-settings_dir : str = Path(__file__).parents[2] / "settings.db"
+#settings location
+settings_dir : str = Path(__file__).parents[2] / "data\\settings.db"
 
 @click.group()
 def wallet() -> None:
     """
-    Handle your virtual wallets.
-    Virtual wallets divide your money for different pourpose 
+    Used to track expenses and earings\n
+    Each wallet requires a parent Account\n
+    Multiple wallets can be used to divide your money\n
     """
     pass
 
+@wallet.command()
+def create() -> None:
+    pass
