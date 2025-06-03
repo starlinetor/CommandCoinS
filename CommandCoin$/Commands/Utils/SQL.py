@@ -3,7 +3,16 @@ import sqlite3
 
 settings_dir : str = Path(__file__).parents[3] / "data\\settings.db"
 
-def get_setting(key:str):
+def get_setting(key:str) -> str:
+    """Returns the value of a given setting
+
+    Args:
+        key (str): name of the setting
+
+    Returns:
+        setting (str): value of the setting
+        
+    """
     print(settings_dir)
     #get connection with database
     conn : sqlite3.Connection = sqlite3.connect(settings_dir) 

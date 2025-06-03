@@ -3,9 +3,8 @@ import sqlite3
 import click
 from datetime import date
 from pathlib import Path
+from Commands.Utils.SQL import *
 
-#settings location
-from Commands.Utils.SQL import settings_dir
 
 @click.group()
 def setup() -> None:
@@ -14,46 +13,70 @@ def setup() -> None:
 
 @setup.command()
 @click.option('-d','--directory', default=str(Path(__file__).parents[2] / "data"), help='Directory for database')
-@click.option('-w','--wipe', default=False, type = bool, help='Wipes old settings file') 
-@click.option('-u','--update_date', default=True, type = bool, help='Update starting date') 
-def basic(directory:str, wipe:bool, update_date:bool) -> None:
+def complete(directory:str) -> None:
     """
-    Basic setup for command coin. It will save the database directory and the current date.\n
-    The current date is used as the starting date for all expenses. 
+    Complete setup for CommandCoin$\n
+    It will wipe all old data
     """
+    #execute partial setups
     
-    #TODO this problably needs some polishing
-    
-    #get settings file directory
+    ctx = click.get_current_context()
+    ctx.invoke(set_db, directory=directory)
+    ctx.invoke(accounts)
+    click.echo("Setup completed")
+
+@setup.command(hidden=True)
+@click.confirmation_option(prompt='This will wipe your settings and database, are you sure?')
+@click.option('-d','--directory', default=str(Path(__file__).parents[2] / "data"), help='Directory for database')
+def set_db(directory:str) -> None:
+    """
+    [INTERNAL/DEBUG] use complete instead\n
+    Creates settings file and database, stores current date as starting date\n
+    It will wipe old data
+    """
+    #database directory
     database_dir : str = directory+"\\CommandCoin$.db"
     
-    #delete save file if needed
-    if wipe:
+    #wipe old files
+    try:
         os.remove(settings_dir)
+        os.remove(database_dir)
+    except FileNotFoundError:
+        # File not found, not a problem
+        pass  
+
     
-    #open save file
-    settings : sqlite3.Connection = sqlite3.connect(settings_dir) 
-    #create settings data and save it
-    cur : sqlite3.Cursor = settings.cursor()
-    cur.execute("CREATE TABLE IF NOT EXISTS settings(setting TEXT PRIMARY KEY, value TEXT)")
-    #save database dir
+    #open settings file and save data
+    conn : sqlite3.Connection = sqlite3.connect(settings_dir) 
+    cur : sqlite3.Cursor = conn.cursor()
+    cur.execute("CREATE TABLE settings(setting TEXT PRIMARY KEY, value TEXT)")
     cur.execute(f"""INSERT OR REPLACE INTO settings VALUES
-                ('database_dir','{database_dir}')
-                """)
-    #update if asked the starting date
-    #TODO this does not make sence, you always want to have a date so check if is already present
-    #TODO arguably i don't even know why i need a starting date 
-    if update_date:
-        cur.execute(f"""INSERT OR REPLACE INTO settings VALUES  
+                ('database_dir','{database_dir}'),
                 ('start_date','{str(date.today())}')
                 """)
-    settings.commit()
+    conn.commit()
+    conn.close()
+    
     #create database
-    sqlite3.connect(database_dir)
+    sqlite3.connect(database_dir).close()
+    
 
-@setup.command()
-@click.option('-w','--wipe', default=False, type = bool, help='Wipes old settings file') 
-def accounts():
-    #TODO this should create a basic table that stores each account info
-    #name, id (i think is better if each table for each account is named after the id and not the actual name)
-    pass
+@setup.command(hidden=True)
+@click.confirmation_option(prompt='This will wipe your Accounts table in the database, are you sure?')
+def accounts() -> None:
+    """
+    [INTERNAL/DEBUG] use complete instead\n
+    Creates the Accounts table in the database\n
+    It will wipe old data
+    """
+    #get database
+    databse_dir : str = get_setting("database_dir")
+    conn : sqlite3.Connection = sqlite3.connect(databse_dir)
+    cur : sqlite3.Cursor = conn.cursor()
+    
+    #wipe old table and create a new one
+    cur.execute("DROP TABLE IF EXISTS Accounts")
+    cur.execute("CREATE TABLE Accounts(id TEXT PRIMARY KEY, name TEXT)")
+    conn.commit()
+    #close connection
+    conn.close()
