@@ -1,5 +1,6 @@
 import os
 import sqlite3
+import time
 import click
 from datetime import date
 from pathlib import Path
@@ -33,18 +34,26 @@ def set_db(directory:str) -> None:
     [INTERNAL/DEBUG] use complete instead\n
     Creates settings file and database, stores current date as starting date\n
     It will wipe old data
-    """
-    #database directory
-    database_dir : str = directory+"\\CommandCoin$.db"
-    
+    """    
     #wipe old files
     try:
+        #remove old database
+        os.remove(get_setting("database_dir"))
+        #sleep needed to be sure that the settings file is released
+        time.sleep(0.1)
+    except FileNotFoundError:
+        # File not found, not a problem
+        pass
+    except sqlite3.OperationalError:
+        click.echo("No previous database detected - initializing fresh installation", err=True)  
+    try:
         os.remove(settings_dir)
-        os.remove(database_dir)
     except FileNotFoundError:
         # File not found, not a problem
         pass  
 
+    #database directory
+    database_dir : str = directory+"\\CommandCoin$.db"
     
     #open settings file and save data
     conn : sqlite3.Connection = sqlite3.connect(settings_dir) 

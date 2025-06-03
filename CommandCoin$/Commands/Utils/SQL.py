@@ -13,7 +13,6 @@ def get_setting(key:str) -> str:
         setting (str): value of the setting
         
     """
-    print(settings_dir)
     #get connection with database
     conn : sqlite3.Connection = sqlite3.connect(settings_dir) 
     #get cursor
