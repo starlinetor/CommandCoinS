@@ -2,6 +2,11 @@ import sqlite3
 import click
 from Commands.Utils.SQL import get_setting
 
+class account:
+    def __init__(self, id, name):
+        pass
+
+
 @click.group()
 def accounts() -> None:
     """
@@ -17,7 +22,7 @@ def accounts() -> None:
     Accounts datastructure info
     Accounts are stored in the Account table
     The table contains : 
-        -id : id of the account, this is unique, used to find chil table
+        -id : id of the account, this is unique, used to find corresponding table
         -name : name of the account
     For each Account there is a corresponding table named Account_ID with the ID replaced by the ID number of the account
     Each Account_ID folder will contain the following data
@@ -25,6 +30,8 @@ def accounts() -> None:
         -name : name of the wallet
     """
     pass
+
+
 
 @accounts.command()
 def create(name:str) -> None:
