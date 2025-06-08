@@ -8,3 +8,101 @@ _________                                           .____________        .__    
     \/             \/      \/     \/     \/      \/         \/               \/  \/   \/      
 ```
 Font credits : https://github.com/Marak/asciimo/blob/master/fonts/Graffiti.flf
+
+# Current database data structure
+
+## Database Structure 0.0.1
+
+## Databases
+
+### Config.db
+Always located at `CommandCoin$\data\Config.db`.
+Contains data needed for the program to run like important data or references and api keys.
+
+#### Tables
+List of tables of the database.
+
+##### settings 
+Contains global settings and options to change the behavior of the program.
+| Colum   | Type | Description    | Example                |
+|---------|------|----------------|------------------------|
+| setting | text | primary key    | auto_update, use rule1 |
+| value   | text | setting value  | true, 1                |
+
+##### data
+Contains important data like saved references api keys etc. 
+| Colum   | Type | Description    | Example                  |
+|---------|------|----------------|--------------------------|
+| name    | text | primary key    | BBVA_api_key, start_date |
+| value   | text | setting value  | 0absd0123, 12/03/2022    |
+
+### CommandCoin$.db
+Default path is `CommandCoin$\data\CommandCoin$.db`.
+The path can be changed to any preferred path.
+The path is saved in the data table in the Config database. 
+Contains all the user data.
+Non global settings are stored here (Accounts and Wallets settings). 
+
+#### Data structure
+```
+Accounts 
+├── Settings  
+└── Wallets
+    ├── Settings 
+    └── Dates 
+        └── Expenses
+```
+Accounts represent each bank account
+Wallets divide your bank account into founds for different purposes.
+For example you might want to divide your money into needs and wants etc. 
+Each wallet contains a list of dates, each time you add a purchase or a transaction it will be stored in the corresponding date. 
+##### ID
+Ids are incremental and immutable.
+Ids all start from 0.
+Id structure : [x.y.z.w]
+- x id of the Account.
+- y id of the wallet.
+- z id of the date.
+the starting date saved in Config\data is date 0.
+other dates go on from there incrementally.
+- w id of the expense.
+
+
+#### Tables
+List of tables of the database
+
+##### Accounts
+Contains the list of all accounts
+| Colum | Type | Description         | Example                |
+|-------|------|---------------------|------------------------|
+| id    | text | primary key         | 2, 3, 5, 6             |
+| name  | text | name of the account | BBVA, American Express |
+
+##### x
+Contains the list of all wallets in an account
+| Colum | Type | Description        | Example           |
+|-------|------|--------------------|-------------------|
+| id    | text | primary key        | 2.2, 123.3, 29.32 |
+| name  | text | name of the wallet | Needs, wants      |
+
+##### x_settings
+Contains the list of settings of an account
+| Colum   | Type | Description          | Example                |
+|---------|------|----------------------|------------------------|
+| setting | text | primary key          | auto_update, use rule1 |
+| value   | text | value of the setting | true, 1                |
+
+##### x.y_settings
+Contains the list of settings of a wallet
+| Colum   | Type | Description          | Example                |
+|---------|------|----------------------|------------------------|
+| setting | text | primary key          | auto_update, use rule1 |
+| value   | text | value of the setting | true, 1                |
+
+##### x.x.x
+Contains the list of expenses on a date of a wallet
+| Colum       | Type    | Description                      | Example               |
+|-------------|---------|----------------------------------|-----------------------|
+| id          | text    | primary key                      | 22.3.21.3, 3.3.3.3    |
+| description | text    | short description of the expense | groceries, bike, gift |
+| value       | integer | prices saved as cents            | -1101, 1023, 342      |
