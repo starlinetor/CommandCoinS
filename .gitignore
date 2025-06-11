@@ -1,5 +1,5 @@
 #private project files
-settings.db
+Config.db
 CommandCoin$.db
 
 # Byte-compiled / optimized / DLL files
