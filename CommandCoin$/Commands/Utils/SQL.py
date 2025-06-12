@@ -21,7 +21,6 @@ def get_setting(key:str) -> str:
             cur.execute(f"SELECT Value FROM settings WHERE Setting='{key}'")
             #get value
             setting = cur.fetchone()[0]
-            conn.close()
             #return value
             return setting
     except sqlite3.Error as e:
@@ -53,7 +52,6 @@ def get_data(key:str) -> str:
             cur.execute(f"SELECT Value FROM data WHERE Name='{key}'")
             #get value
             data = cur.fetchone()[0]
-            conn.close()
             #return value
             return data
     except sqlite3.Error as e:
