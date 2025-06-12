@@ -10,8 +10,8 @@ _________                                           .____________        .__    
 Font credits : https://github.com/Marak/asciimo/blob/master/fonts/Graffiti.flf
 
 # Current database structure
-## [Documentation](./data/Documentation/Database%20Structure/0.0.1_b.md)
+## [Documentation](./Documentation/Database%20Structure/0.0.1_b.md)
 
 # Available settings
-## [Documentation](./data/Documentation/Settings.md)
+## [Documentation](./Documentation/Settings.md)
 
