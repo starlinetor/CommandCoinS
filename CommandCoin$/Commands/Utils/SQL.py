@@ -13,24 +13,8 @@ def get_setting(key:str) -> str:
         setting (str): value of the setting
         
     """
-    try:
-        with sqlite3.connect(config_dir)  as conn:  
-            #get cursor
-            cur : sqlite3.Cursor = conn.cursor()
-            #selects the column setting from the table settings
-            cur.execute(f"SELECT Value FROM settings WHERE Setting='{key}'")
-            #get value
-            setting = cur.fetchone()[0]
-            #return value
-            return setting
-    except sqlite3.Error as e:
-        #Something went wrong, just close the connection and return nothing
-        print(e)
-        print(f"{key} was not found, returned an empty string")
-        conn.close()
-        return ""
-    finally:
-        conn.close()
+    #invoking internal function
+    return get_setting_data(key, "setting")
     
 
 def get_data(key:str) -> str:
@@ -43,17 +27,35 @@ def get_data(key:str) -> str:
         data (str): value of the data
         
     """
+    #invoking internal function
+    return get_setting_data(key, "data")
+
+def get_setting_data(key:str, setting_or_data:str) -> str:
+    """[INTERNAL/DEBUG] use complete get_setting or get_data instead\n
+    Returns the value of a setting/data entry in the config file\n
+
+    Args:
+        key (str): name of the data
+        setting_or_data (str) : chose between "data" or "setting"
+
+    Returns:
+        data (str): value of the data
+        
+    """
     #get connection with database
     try:
         with sqlite3.connect(config_dir)  as conn:  
             #get cursor
             cur : sqlite3.Cursor = conn.cursor()
             #selects the column setting from the table settings
-            cur.execute(f"SELECT Value FROM data WHERE Name='{key}'")
+            cur.execute(f"SELECT Value FROM {setting_or_data} WHERE Name='{key}'")
             #get value
-            data = cur.fetchone()[0]
+            value = cur.fetchone()
+            #data might be None, in that case we just return an error
+            if value is None:
+                raise sqlite3.Error()
             #return value
-            return data
+            return value[0]
     except sqlite3.Error as e:
         #Something went wrong, just close the connection and return nothing
         print(e)
@@ -62,4 +64,3 @@ def get_data(key:str) -> str:
         return ""
     finally:
         conn.close()
-

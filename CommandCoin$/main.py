@@ -1,9 +1,8 @@
 import click
-from pathlib import Path
-from Commands.Tester import tester
-from Commands.Setup import setup
-from Commands.Wallets import wallet
-from Commands.Accounts import accounts
+import Commands.Tester as tester
+import Commands.Setup as setup
+import Commands.Wallets as wallets
+import Commands.Accounts as accounts
 
 #create main group
 @click.group()
@@ -12,10 +11,10 @@ def main() -> None:
     pass
 
 #add all commands
-main.add_command(tester)
-main.add_command(setup)
-main.add_command(wallet)
-main.add_command(accounts)
+main.add_command(tester.tester)
+main.add_command(setup.setup)
+main.add_command(wallets.wallets)
+main.add_command(accounts.accounts)
 
 if __name__ == "__main__":
     main()

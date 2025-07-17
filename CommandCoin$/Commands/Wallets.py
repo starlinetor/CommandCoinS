@@ -2,7 +2,7 @@ import click
 from pathlib import Path
 
 @click.group()
-def wallet() -> None:
+def wallets() -> None:
     """
     Used to track expenses and earings\n
     Each wallet requires a parent Account\n
@@ -10,7 +10,7 @@ def wallet() -> None:
     """
     pass
 
-@wallet.command()
+@wallets.command()
 def create() -> None:
     "WIP"
     pass

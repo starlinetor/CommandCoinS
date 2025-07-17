@@ -16,7 +16,7 @@ def setup() -> None:
 @setup.command()
 @click.confirmation_option(prompt='This will wipe your Config file and database, are you sure?')
 @click.option('-d','--directory', default=str(Path(__file__).parents[2] / "data"), help='Directory for database')
-@click.option('-d','--start_date',type=click.DateTime(formats=["%Y-%d-%m"]), default=str(date.today()), help='Starting date (YYYY-MM-DD)')
+@click.option('-d','--start_date',type=click.DateTime(formats=["%Y-%m-%d"]), default=str(date.today()), help='Starting date (YYYY-MM-DD)')
 @click.option('-v','--verbose', default=False, help='Increased debug information')
 def complete(directory:str, start_date:str, verbose:bool) -> None:
     """
@@ -102,7 +102,11 @@ def config(directory:str, start_date:str) -> None:
                 CREATE TABLE data(Name TEXT PRIMARY KEY, Value TEXT);
                 INSERT OR REPLACE INTO data VALUES
                 ('database_dir','{database_dir}'),
-                ('start_date','{start_date}')
+                ('start_date','{start_date}'),
+                ('account_id_counter','0'),
+                ('wallet_id_counter','0'),
+                ('date_id_counter','0'),
+                ('expense_id_counter','0') 
                 """)
     conn.commit()
     conn.close()
