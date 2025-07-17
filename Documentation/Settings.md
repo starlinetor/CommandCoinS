@@ -16,9 +16,11 @@ Used by the program to calculate the Date_Id, the start_date has Id 0, the Id is
 Stores last used id for accounts, incremented each time a new account is created
 - wallet_id_counter : 
 Similarly
-- account_id_counter : 
+- date_id_counter : 
 Similarly
-- account_id_counter : 
+- expense_id_counter : 
+Similarly
+- tag_id_counter : 
 Similarly
 # CommandCoin$
 ## Accounts

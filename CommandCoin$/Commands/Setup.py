@@ -98,7 +98,7 @@ def config(directory:str, start_date:str) -> None:
     cur.executescript(f"""
                 DROP TABLE IF EXISTS settings;
                 DROP TABLE IF EXISTS data;
-                CREATE TABLE settings(Setting TEXT PRIMARY KEY, Value TEXT);
+                CREATE TABLE settings(Name TEXT PRIMARY KEY, Value TEXT);
                 CREATE TABLE data(Name TEXT PRIMARY KEY, Value TEXT);
                 INSERT OR REPLACE INTO data VALUES
                 ('database_dir','{database_dir}'),
@@ -106,7 +106,8 @@ def config(directory:str, start_date:str) -> None:
                 ('account_id_counter','0'),
                 ('wallet_id_counter','0'),
                 ('date_id_counter','0'),
-                ('expense_id_counter','0') 
+                ('expense_id_counter','0'),
+                ('tag_id_counter','0')  
                 """)
     conn.commit()
     conn.close()
@@ -136,7 +137,7 @@ def database() -> None:
     #accounts
     cur.executescript("""
                 CREATE TABLE accounts(
-                    Account_Id INTEGER PRIMARY KEY, 
+                    Account_Id INTEGER, 
                     Name TEXT,
                     PRIMARY KEY (Account_Id, Name)
                 )
@@ -154,9 +155,9 @@ def database() -> None:
     #tags
     cur.executescript("""
                 CREATE TABLE tags(
-                    Tag_Id INTEGER PRIMARY KEY, 
+                    Tag_Id INTEGER, 
                     Name TEXT, 
-                    Description TEXT
+                    Description TEXT,
                     PRIMARY KEY (Tag_Id, Name)
                 )
                 """) 
