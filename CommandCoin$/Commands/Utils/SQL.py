@@ -51,7 +51,7 @@ def get_config(key:str, table:str) -> str:
             value = cur.fetchone()
             #data might be None, in that case we just return an error
             if value is None:
-                raise sqlite3.Error()
+                raise sqlite3.Error("No entries matching the criteria")
             #return value
             return value[0]
     except sqlite3.Error as e:
@@ -141,7 +141,7 @@ def get_new_id(id_name:str) -> int:
     edit_data(entry, str(new_id))
     return new_id
 
-def add_entry_database(cursor:sqlite3.Cursor, table:str, *entries:str) -> None:
+def add_entry_database(cursor:sqlite3.Cursor, table:str, entries:tuple[str]) -> None:
     """Adds a new entry in a target database and table\n
     does not commit or close the connection
 
@@ -156,3 +156,34 @@ def add_entry_database(cursor:sqlite3.Cursor, table:str, *entries:str) -> None:
     entries = [f"'{entry}'" for entry in entries]
     command = command + "(" + ",".join(entries) + ")"
     cursor.execute(command)
+
+def read_entry_database(cursor:sqlite3.Cursor, table:str, name:str, columns:tuple[str], keys:tuple[str]) -> tuple:
+    """Returns the entries that match the specified criteria
+
+    Args:
+        cursor (sqlite3.Cursor): cursor connected to the database
+        table (str): table in the database
+        name (str): name of the entries column
+        columns (tuple[str]): columns to search trough
+        keys (tuple[str]): key for each column
+
+    Returns:
+        tuple: list of found entries
+    """
+    #target 
+    #SELECT Value FROM table WHERE Name='key' AND Name='key'
+    if len(columns) != len(keys):
+        raise ValueError("columns and keys must have the same length")
+    command : str = f"SELECT {name} FROM {table} WHERE " + "=? AND ".join(columns) + "=?"
+    try :
+        cursor.execute(command, keys)
+        value = cursor.fetchone()
+        if value is None:
+            raise sqlite3.Error("No entries matching the criteria")
+        #return value
+        return value
+    except sqlite3.Error as e:
+        #Something went wrong, return nothing
+        print(e)
+        print(f"{name} was not found, returned an empty tuple")
+        return ()

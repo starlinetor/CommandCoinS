@@ -54,11 +54,24 @@ def get_id(id_name : str):
 @sql.command()
 @click.argument('table')
 @click.option("--entries", "-e", multiple=True, required=True)
-def add_entry_database(table:str, entries):
+def add_entry_database(table:str, entries:tuple[str]):
     """add_entry_database tester"""
     conn : sqlite3.Connection = sqlite3.connect(SQL.get_data("database_dir"))
     cur : sqlite3.Cursor = conn.cursor()
-    SQL.add_entry_database(cur,table,*entries)
+    SQL.add_entry_database(cur,table,entries)
+    conn.commit()
+    conn.close()
+
+@sql.command()
+@click.argument('table')
+@click.argument('name')
+@click.option("--columns", "-c", multiple=True, required=True)
+@click.option("--keys", "-k", multiple=True, required=True)
+def read_entry_database(table:str, name:str, columns:tuple[str], keys:tuple[str]):
+    """read_entry_database tester"""
+    conn : sqlite3.Connection = sqlite3.connect(SQL.get_data("database_dir"))
+    cur : sqlite3.Cursor = conn.cursor()
+    click.echo(SQL.read_entry_database(cur,table,name,columns,keys))
     conn.commit()
     conn.close()
 

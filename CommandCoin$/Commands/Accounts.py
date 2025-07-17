@@ -33,7 +33,7 @@ def create(name:str) -> None:
         conn : sqlite3.Connection = sqlite3.connect(SQL.get_data("database_dir"))
         cur : sqlite3.Cursor = conn.cursor()
         account_id : int = SQL.get_new_id("account")
-        SQL.add_entry_database(cur,"accounts", account_id, name)
+        SQL.add_entry_database(cur,"accounts", (account_id, name))
         conn.commit()
         conn.close()
         click.echo(f"{name} account created successfully")
