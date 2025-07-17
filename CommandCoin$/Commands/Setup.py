@@ -137,7 +137,8 @@ def database() -> None:
     cur.executescript("""
                 CREATE TABLE accounts(
                     Account_Id INTEGER PRIMARY KEY, 
-                    Name TEXT
+                    Name TEXT,
+                    PRIMARY KEY (Account_Id, Name)
                 )
                 """)   
     #wallets
@@ -146,7 +147,7 @@ def database() -> None:
                     Account_Id INTEGER, 
                     Wallet_Id INTEGER, 
                     Name TEXT,
-                    PRIMARY KEY (Account_Id, Wallet_Id),
+                    PRIMARY KEY (Account_Id, Wallet_Id, Name),
                     FOREIGN KEY (Account_Id) REFERENCES accounts(Account_Id) ON DELETE CASCADE
                 )
                 """)
@@ -156,6 +157,7 @@ def database() -> None:
                     Tag_Id INTEGER PRIMARY KEY, 
                     Name TEXT, 
                     Description TEXT
+                    PRIMARY KEY (Tag_Id, Name)
                 )
                 """) 
     #expenses
