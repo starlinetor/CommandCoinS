@@ -139,7 +139,8 @@ def database() -> None:
                 CREATE TABLE accounts(
                     Account_Id INTEGER, 
                     Name TEXT,
-                    PRIMARY KEY (Account_Id, Name)
+                    PRIMARY KEY (Account_Id, Name),
+                    UNIQUE (Name)
                 )
                 """)   
     #wallets
@@ -149,6 +150,7 @@ def database() -> None:
                     Wallet_Id INTEGER, 
                     Name TEXT,
                     PRIMARY KEY (Account_Id, Wallet_Id, Name),
+                    UNIQUE (Name),
                     FOREIGN KEY (Account_Id) REFERENCES accounts(Account_Id) ON DELETE CASCADE
                 )
                 """)
@@ -158,7 +160,8 @@ def database() -> None:
                     Tag_Id INTEGER, 
                     Name TEXT, 
                     Description TEXT,
-                    PRIMARY KEY (Tag_Id, Name)
+                    PRIMARY KEY (Tag_Id, Name),
+                    UNIQUE (Name)
                 )
                 """) 
     #expenses
@@ -171,6 +174,7 @@ def database() -> None:
                     Description TEXT,
                     Value INTEGER,
                     PRIMARY KEY (Account_Id, Wallet_Id, Date_Id, Expense_Id),
+                    UNIQUE (Expense_Id)
                     FOREIGN KEY (Account_Id) REFERENCES accounts(Account_Id) ON DELETE CASCADE,
                     FOREIGN KEY (Wallet_Id) REFERENCES wallets(Wallet_Id) ON DELETE CASCADE
                 )

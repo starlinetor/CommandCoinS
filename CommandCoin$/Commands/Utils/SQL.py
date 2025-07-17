@@ -125,7 +125,7 @@ def edit_config(key:str, new_value:str, table:str) -> str:
     finally:
         conn.close()
 
-def get_id(id_name:str) -> int:
+def get_new_id(id_name:str) -> int:
     """Returns a new id for the specified object\n
     increments automatically ids
     Args:
@@ -140,3 +140,19 @@ def get_id(id_name:str) -> int:
     new_id : int = int(get_data(entry)) + 1
     edit_data(entry, str(new_id))
     return new_id
+
+def add_entry_database(cursor:sqlite3.Cursor, table:str, *entries:str) -> None:
+    """Adds a new entry in a target database and table\n
+    does not commit or close the connection
+
+    Args:
+        cursor (sqlite3.Cursor): sqlite 3 cursor connected to the target database
+        table (str): name of the target table
+        entries (str) : all values of the data
+    """
+    #target  :
+    # "INSERT OR REPLACE INTO data VALUES ('database_dir','database_dir')"
+    command : str = f"INSERT INTO {table} VALUES "
+    entries = [f"'{entry}'" for entry in entries]
+    command = command + "(" + ",".join(entries) + ")"
+    cursor.execute(command)

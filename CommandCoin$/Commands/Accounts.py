@@ -1,6 +1,7 @@
+from ast import expr_context
 import sqlite3
 import click
-from Commands.Utils.SQL import get_setting
+import Commands.Utils.SQL as SQL
 
 class account:
     def __init__(self, id, name):
@@ -10,8 +11,8 @@ class account:
 @click.group()
 def accounts() -> None:
     """
-    Rappresentation of one of your bank accounts\n
-    Holds information, settings and automations\n
+    Representation of one of your bank accounts\n
+    Holds information, settings and automation\n
     You can create a wallets to track expenses\n
     """
     #TODO : create a class for accounts
@@ -20,9 +21,24 @@ def accounts() -> None:
     
     pass
 
-
-
 @accounts.command()
+@click.argument('name')
 def create(name:str) -> None:
-    database_dir : str = get_setting("database_dir")
-    
+    """Creates a new account
+
+    Args:
+        name (str): name of the new account
+    """
+    try:
+        conn : sqlite3.Connection = sqlite3.connect(SQL.get_data("database_dir"))
+        cur : sqlite3.Cursor = conn.cursor()
+        account_id : int = SQL.get_new_id("account")
+        SQL.add_entry_database(cur,"accounts", account_id, name)
+        conn.commit()
+        conn.close()
+        click.echo(f"{name} account created successfully")
+    except sqlite3.IntegrityError as e:
+        if "UNIQUE constraint failed:" in str(e):
+            click.echo(f"An account with the following name already exists : {name}")
+        else : 
+            click.echo(e)

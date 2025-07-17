@@ -1,3 +1,4 @@
+import sqlite3
 import click
 import Commands.Utils.SQL  as SQL
 
@@ -33,7 +34,7 @@ def sql() -> None:
 @click.argument('table')
 def get_config(key : str, table : str):
     """Returns the value of a setting or a data entry in the config database"""
-    print(SQL.get_config(key, table))
+    click.echo(SQL.get_config(key, table))
 
 @sql.command()
 @click.argument('key')
@@ -41,11 +42,23 @@ def get_config(key : str, table : str):
 @click.argument('table')
 def edit_config(key : str, new_value : str, table : str):
     """Edits and returns the value of a setting or a data entry in the config database"""
-    print(SQL.edit_config(key, new_value, table))
+    click.echo(SQL.edit_config(key, new_value, table))
 
 @sql.command()
 @click.argument('id_name')
 def get_id(id_name : str):
     """Returns a new id for the specified object\n
     increments automatically ids"""
-    print(SQL.get_id(id_name))
+    click.echo(SQL.get_id(id_name))
+
+@sql.command()
+@click.argument('table')
+@click.option("--entries", "-e", multiple=True, required=True)
+def add_entry_database(table:str, entries):
+    """add_entry_database tester"""
+    conn : sqlite3.Connection = sqlite3.connect(SQL.get_data("database_dir"))
+    cur : sqlite3.Cursor = conn.cursor()
+    SQL.add_entry_database(cur,table,*entries)
+    conn.commit()
+    conn.close()
+
