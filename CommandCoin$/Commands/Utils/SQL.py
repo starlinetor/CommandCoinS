@@ -1,8 +1,9 @@
 from pathlib import Path
 import sqlite3
-
+ValidId23 : str = ""
+#software variables
 config_dir : str = Path(__file__).parents[3] / "data\\Config.db"
-#list of valid ids
+#list of objects that have an id
 #update as needed
 valid_id : list[str] = ["account", "wallet", "date", "expense", "tag"]
 
@@ -125,6 +126,15 @@ def edit_config(key:str, new_value:str, table:str) -> str:
     finally:
         conn.close()
 
+def check_valid_id_name(id_name:str)->None:
+    """Checks if an id is valid. In the case is not trows an error. 
+
+    Args:
+        id_name (str): name of the object which the id is for
+    """
+    if id_name not in valid_id:
+        raise ValueError(f"{id_name} is not a valid id\n valid ids : {valid_id}")
+
 def get_new_id(id_name:str) -> int:
     """Returns a new id for the specified object\n
     increments automatically ids
@@ -134,14 +144,13 @@ def get_new_id(id_name:str) -> int:
     Returns:
         int: new id for the object
     """
-    if id_name not in valid_id:
-        raise ValueError(f"{id_name} is not a valid id\n valid ids : {valid_id}")
+    check_valid_id_name(id_name)
     entry : str = f"{id_name}_id_counter"
     new_id : int = int(get_data(entry)) + 1
     edit_data(entry, str(new_id))
     return new_id
 
-def add_entry_database(cursor:sqlite3.Cursor, table:str, entries:tuple[str]) -> None:
+def add_entry_database(cur:sqlite3.Cursor, table:str, entries:tuple[str]) -> None:
     """Adds a new entry in a target database and table\n
     does not commit or close the connection
 
@@ -153,17 +162,17 @@ def add_entry_database(cursor:sqlite3.Cursor, table:str, entries:tuple[str]) -> 
     #target  :
     # "INSERT OR REPLACE INTO data VALUES ('database_dir','database_dir')"
     command : str = f"INSERT INTO {table} VALUES "
-    entries = [f"'{entry}'" for entry in entries]
+    entries = tuple(f"'{entry}'" for entry in entries)
     command = command + "(" + ",".join(entries) + ")"
-    cursor.execute(command)
+    cur.execute(command)
 
-def read_entry_database(cursor:sqlite3.Cursor, table:str, name:str, columns:tuple[str], keys:tuple[str]) -> tuple:
+def read_entry_database(cur:sqlite3.Cursor, table:str, target:str, columns:tuple[str], keys:tuple[str]) -> tuple:
     """Returns the entries that match the specified criteria
 
     Args:
         cursor (sqlite3.Cursor): cursor connected to the database
         table (str): table in the database
-        name (str): name of the entries column
+        target (str): name of the target entries column
         columns (tuple[str]): columns to search trough
         keys (tuple[str]): key for each column
 
@@ -173,11 +182,11 @@ def read_entry_database(cursor:sqlite3.Cursor, table:str, name:str, columns:tupl
     #target 
     #SELECT Value FROM table WHERE Name='key' AND Name='key'
     if len(columns) != len(keys):
-        raise ValueError("columns and keys must have the same length")
-    command : str = f"SELECT {name} FROM {table} WHERE " + "=? AND ".join(columns) + "=?"
+        raise ValueError(f"columns and keys must have the same length\ncolumns : {columns}\nkeys : {keys}")
+    command : str = f"SELECT {target} FROM {table} WHERE " + "=? AND ".join(columns) + "=?"
     try :
-        cursor.execute(command, keys)
-        value = cursor.fetchone()
+        cur.execute(command, keys)
+        value = cur.fetchone()
         if value is None:
             raise sqlite3.Error("No entries matching the criteria")
         #return value
@@ -185,5 +194,45 @@ def read_entry_database(cursor:sqlite3.Cursor, table:str, name:str, columns:tupl
     except sqlite3.Error as e:
         #Something went wrong, return nothing
         print(e)
-        print(f"{name} was not found, returned an empty tuple")
+        print(f"{target} was not found, returned an empty tuple")
         return ()
+
+def get_ids(cur:sqlite3.Cursor, name : str, id_name:str)->tuple[int]:
+    """Returns the ids of all objects matching a given name
+
+    Args:
+        cur (sqlite3.Cursor): cursor connected to CommandCoin$.db
+        name (str): name of the object we are trying to find the id of
+        id_name (str): type of object, check the documentation
+
+    Returns:
+        tuple[int]: list of ids matching the same name, some object have unique names
+    """
+    check_valid_id_name(id_name)
+    #f"{id_name}s" is the table
+    #f"{id_name}_id" is the column with the ids we are trying to find
+    #("name") is the column containing the names
+    # name is the target 
+    ids_str : tuple[str] = read_entry_database(cur, f"{id_name}s", f"{id_name}_id",("name",),(name,))
+    ids = tuple(int(id_str) for id_str in ids_str)
+    return ids
+
+def get_id(cur:sqlite3.Cursor, name : str, id_name:str)-> int:
+    """Returns the first matching id given a name,\n
+    If none or more than one are found a sqlite3.IntegrityError will be thrown\n
+    Should be used only when one and only one id is required   
+
+    Args:
+        cur (sqlite3.Cursor): cursor connected to CommandCoin$.db
+        name (str): name of the object we are trying to find the id of
+        id_name (str): type of object, check the documentation
+
+    Returns:
+        int: first matching id
+    """
+    ids : tuple[int] = get_ids(cur, name, id_name)
+    if len(ids) == 0:
+        raise sqlite3.IntegrityError(f"No {id_name} named {name} has been found")
+    if len(ids) == 1:
+        return ids[0]
+    raise sqlite3.IntegrityError(f"Multiple {id_name} named {name} have been found")

@@ -78,7 +78,7 @@ def wipe_config(verbose:Boolean) -> None:
 @setup.command(hidden=True)
 @click.confirmation_option(prompt='This will wipe your Config file data and settings, are you sure?')
 @click.option('-dir','--directory', default=str(Path(__file__).parents[2] / "data"), help='Directory for database')
-@click.option('-d','--start_date',type=click.DateTime(formats=["%Y-%d-%m"]), default=str(date.today()), help='Starting date (YYYY-MM-DD)')
+@click.option('-d','--start_date',type=click.DateTime(formats=["%Y-%m-%d"]), default=str(date.today()), help='Starting date (YYYY-MM-DD)')
 def config(directory:str, start_date:str) -> None:
     """
     [INTERNAL/DEBUG] use complete instead\n
@@ -87,7 +87,7 @@ def config(directory:str, start_date:str) -> None:
     Will wipe old data and settings on the database
     """
     #database directory
-    database_dir : str = directory+"\\CommandCoin$.db"
+    database_dir : str = str(Path(directory) / "CommandCoin$.db")
     
     #open settings file and save data
     conn : sqlite3.Connection = sqlite3.connect(config_dir) 
@@ -98,8 +98,8 @@ def config(directory:str, start_date:str) -> None:
     cur.executescript(f"""
                 DROP TABLE IF EXISTS settings;
                 DROP TABLE IF EXISTS data;
-                CREATE TABLE settings(Name TEXT PRIMARY KEY, Value TEXT);
-                CREATE TABLE data(Name TEXT PRIMARY KEY, Value TEXT);
+                CREATE TABLE settings(name TEXT PRIMARY KEY, value TEXT);
+                CREATE TABLE data(name TEXT PRIMARY KEY, value TEXT);
                 INSERT OR REPLACE INTO data VALUES
                 ('database_dir','{database_dir}'),
                 ('start_date','{start_date}'),
@@ -137,84 +137,84 @@ def database() -> None:
     #accounts
     cur.executescript("""
                 CREATE TABLE accounts(
-                    Account_Id INTEGER, 
-                    Name TEXT,
-                    PRIMARY KEY (Account_Id, Name),
-                    UNIQUE (Name)
+                    account_id INTEGER, 
+                    name TEXT,
+                    PRIMARY KEY (account_id),
+                    UNIQUE (name)
                 )
                 """)   
     #wallets
     cur.executescript("""
                 CREATE TABLE wallets(
-                    Account_Id INTEGER, 
-                    Wallet_Id INTEGER, 
-                    Name TEXT,
-                    PRIMARY KEY (Account_Id, Wallet_Id, Name),
-                    UNIQUE (Name),
-                    FOREIGN KEY (Account_Id) REFERENCES accounts(Account_Id) ON DELETE CASCADE
+                    account_id INTEGER, 
+                    wallet_id INTEGER, 
+                    name TEXT,
+                    PRIMARY KEY (account_id, wallet_id),
+                    UNIQUE (account_id, name),
+                    FOREIGN KEY (account_id) REFERENCES accounts(account_id) ON DELETE CASCADE
                 )
                 """)
     #tags
     cur.executescript("""
                 CREATE TABLE tags(
-                    Tag_Id INTEGER, 
-                    Name TEXT, 
-                    Description TEXT,
-                    PRIMARY KEY (Tag_Id, Name),
-                    UNIQUE (Name)
+                    tag_id INTEGER, 
+                    name TEXT, 
+                    description TEXT,
+                    PRIMARY KEY (tag_id),
+                    UNIQUE (name)
                 )
                 """) 
     #expenses
     cur.executescript("""
                 CREATE TABLE expenses(
-                    Account_Id INTEGER,
-                    Wallet_Id INTEGER,
-                    Date_Id INTEGER,
-                    Expense_Id INTEGER,
-                    Description TEXT,
-                    Value INTEGER,
-                    PRIMARY KEY (Account_Id, Wallet_Id, Date_Id, Expense_Id),
-                    UNIQUE (Expense_Id)
-                    FOREIGN KEY (Account_Id) REFERENCES accounts(Account_Id) ON DELETE CASCADE,
-                    FOREIGN KEY (Wallet_Id) REFERENCES wallets(Wallet_Id) ON DELETE CASCADE
+                    account_id INTEGER,
+                    wallet_id INTEGER,
+                    date_id INTEGER,
+                    expense_id INTEGER,
+                    name TEXT,
+                    description TEXT,
+                    value INTEGER,
+                    PRIMARY KEY (account_id, wallet_id, date_id, expense_id),
+                    FOREIGN KEY (account_id) REFERENCES accounts(account_id) ON DELETE CASCADE,
+                    FOREIGN KEY (wallet_id) REFERENCES wallets(wallet_id) ON DELETE CASCADE
                 )
                 """)
     #expenses_tags
     cur.executescript("""
                 CREATE TABLE expenses_tags(
-                    Account_Id INTEGER,
-                    Wallet_Id INTEGER,
-                    Date_Id INTEGER,
-                    Expense_Id INTEGER,
-                    Tag_Id INTEGER,
-                    PRIMARY KEY (Account_Id, Wallet_Id, Date_Id, Expense_Id, Tag_Id),
-                    FOREIGN KEY (Account_Id, Wallet_Id, Date_Id, Expense_Id)
-                    REFERENCES expenses(Account_Id, Wallet_Id, Date_Id, Expense_Id) ON DELETE CASCADE,
-                    FOREIGN KEY (Tag_Id) REFERENCES tags(Tag_Id) ON DELETE CASCADE
+                    account_id INTEGER,
+                    wallet_id INTEGER,
+                    date_id INTEGER,
+                    expense_id INTEGER,
+                    tag_id INTEGER,
+                    PRIMARY KEY (account_id, wallet_id, date_id, expense_id, tag_id),
+                    FOREIGN KEY (account_id, wallet_id, date_id, expense_id)
+                    REFERENCES expenses(account_id, wallet_id, date_id, expense_id) ON DELETE CASCADE,
+                    FOREIGN KEY (tag_id) REFERENCES tags(tag_id) ON DELETE CASCADE
                 )
                 """)
     #accounts_settings
     cur.executescript("""
                 CREATE TABLE accounts_settings(
-                    Account_Id INTEGER,
-                    Setting TEXT,
-                    Type TEXT,
-                    Value TEXT,
-                    PRIMARY KEY (Account_Id, Setting),
-                    FOREIGN KEY (Account_Id) REFERENCES accounts(Account_Id) ON DELETE CASCADE
+                    account_id INTEGER,
+                    setting TEXT,
+                    type TEXT,
+                    value TEXT,
+                    PRIMARY KEY (account_id, setting),
+                    FOREIGN KEY (account_id) REFERENCES accounts(account_id) ON DELETE CASCADE
                 )
                 """)
     #wallets_settings
     cur.executescript("""
                 CREATE TABLE wallets_settings(
-                    Account_Id INTEGER,
-                    Wallet_Id INTEGER,
-                    Setting TEXT,
-                    Type TEXT,
-                    Value TEXT,
-                    PRIMARY KEY (Account_Id, Wallet_ID, Setting),
-                    FOREIGN KEY (Account_Id) REFERENCES accounts(Account_Id) ON DELETE CASCADE,
-                    FOREIGN KEY (Wallet_Id) REFERENCES wallets(Wallet_Id) ON DELETE CASCADE
+                    account_id INTEGER,
+                    wallet_id INTEGER,
+                    setting TEXT,
+                    type TEXT,
+                    value TEXT,
+                    PRIMARY KEY (account_id, wallet_id, setting),
+                    FOREIGN KEY (account_id) REFERENCES accounts(account_id) ON DELETE CASCADE,
+                    FOREIGN KEY (wallet_id) REFERENCES wallets(wallet_id) ON DELETE CASCADE
                 )
                 """)
     conn.commit()
