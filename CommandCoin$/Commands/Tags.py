@@ -17,7 +17,7 @@ def create(name:str, description:str)->None:
 
     Args:
         name (str): name of the tag, unique
-        description (str): short description of the tag
+        description (str): short description of the tag, use "" for phrases
     """
     
     try:
