@@ -18,7 +18,8 @@ def create(name:str, account:str) -> None:
     """Creates a new wallet
 
     Args:
-        name (str): name of the new account
+        name (str): name of the new wallet
+        account (str) : name of the account
     """
     try:
         conn : sqlite3.Connection = sqlite3.connect(SQL.get_data("database_dir"))

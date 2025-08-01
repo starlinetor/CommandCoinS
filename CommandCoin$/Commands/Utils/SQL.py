@@ -1,6 +1,5 @@
 from pathlib import Path
 import sqlite3
-ValidId23 : str = ""
 #software variables
 config_dir : str = Path(__file__).parents[3] / "data\\Config.db"
 #list of objects that have an id

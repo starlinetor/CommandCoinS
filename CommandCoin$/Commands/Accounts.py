@@ -1,12 +1,6 @@
-from ast import expr_context
 import sqlite3
 import click
 import Commands.Utils.SQL as SQL
-
-class account:
-    def __init__(self, id, name):
-        pass
-
 
 @click.group()
 def accounts() -> None:
@@ -15,7 +9,6 @@ def accounts() -> None:
     Holds information, settings and automation\n
     You can create a wallets to track expenses\n
     """
-    #TODO : create a class for accounts
     #Each account has a name, and Id, a list of wallets, and special rules
     #Create methods to check info on groups
     
