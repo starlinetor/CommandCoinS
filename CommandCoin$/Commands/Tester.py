@@ -46,10 +46,10 @@ def edit_config(key : str, new_value : str, table : str):
 
 @sql.command()
 @click.argument('id_name')
-def get_id(id_name : str):
+def get_new_id(id_name : str):
     """Returns a new id for the specified object\n
     increments automatically ids"""
-    click.echo(SQL.get_id(id_name))
+    click.echo(SQL.get_new_id(id_name))
 
 @sql.command()
 @click.argument('table')
@@ -75,3 +75,12 @@ def read_entry_database(table:str, name:str, columns:tuple[str], keys:tuple[str]
     conn.commit()
     conn.close()
 
+@sql.command()
+@click.argument('name')
+@click.argument('id_name')
+def get_ids(name:str, id_name : str):
+    conn : sqlite3.Connection = sqlite3.connect(SQL.get_data("database_dir"))
+    cur : sqlite3.Cursor = conn.cursor()
+    print(SQL.get_ids(cur,name, id_name))
+    conn.commit()
+    conn.close()

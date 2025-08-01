@@ -1,5 +1,6 @@
+import sqlite3
 import click
-from pathlib import Path
+import Commands.Utils.SQL as SQL
 
 @click.group()
 def wallets() -> None:
@@ -22,13 +23,14 @@ def create(name:str, account:str) -> None:
     try:
         conn : sqlite3.Connection = sqlite3.connect(SQL.get_data("database_dir"))
         cur : sqlite3.Cursor = conn.cursor()
-        account_id : int = SQL.get_new_id("account")
-        SQL.add_entry_database(cur,"accounts", account_id, name)
+        account_id : int = SQL.get_id(cur, account, "account")
+        wallet_id : int = SQL.get_new_id("wallet")
+        SQL.add_entry_database(cur,"wallets", (account_id, wallet_id, name))
         conn.commit()
         conn.close()
         click.echo(f"{name} account created successfully")
     except sqlite3.IntegrityError as e:
         if "UNIQUE constraint failed:" in str(e):
-            click.echo(f"An account with the following name already exists : {name}")
+            click.echo(f"A wallet with the following name already exists : {name}")
         else : 
             click.echo(e)
