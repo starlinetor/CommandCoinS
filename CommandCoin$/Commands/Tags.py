@@ -5,7 +5,7 @@ import Commands.Utils.SQL as SQL
 @click.group()
 def tags() -> None:
     """
-    Used to differentiate expenses\n
+    Used to differentiate expenses
     """
     pass
 
@@ -13,8 +13,9 @@ def tags() -> None:
 @click.argument("name")
 @click.argument("description")
 def create(name:str, description:str)->None:
-    """Creates a new tag
-
+    """
+    \b
+    Creates a new tag
     Args:
         name (str): name of the tag, unique
         description (str): short description of the tag, use "" for phrases

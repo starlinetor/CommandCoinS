@@ -4,7 +4,7 @@ import sqlite3
 config_dir : str = Path(__file__).parents[3] / "data\\Config.db"
 #list of objects that have an id
 #update as needed
-valid_id : list[str] = ["account", "wallet", "date", "expense", "tag"]
+valid_ids : list[str] = ["account", "wallet", "date", "expense", "tag"]
 
 def get_setting(key:str) -> str:
     """Returns the value of a given setting
@@ -125,14 +125,14 @@ def edit_config(key:str, new_value:str, table:str) -> str:
     finally:
         conn.close()
 
-def check_valid_id_name(id_name:str)->None:
+def check_valid_id_type(id_type:str)->None:
     """Checks if an id is valid. In the case is not trows an error. 
 
     Args:
         id_name (str): name of the object which the id is for
     """
-    if id_name not in valid_id:
-        raise ValueError(f"{id_name} is not a valid id\n valid ids : {valid_id}")
+    if id_type not in valid_ids:
+        raise ValueError(f"{id_type} is not a valid id\n valid ids : {valid_ids}")
 
 def get_new_id(id_name:str) -> int:
     """Returns a new id for the specified object\n
@@ -143,7 +143,7 @@ def get_new_id(id_name:str) -> int:
     Returns:
         int: new id for the object
     """
-    check_valid_id_name(id_name)
+    check_valid_id_type(id_name)
     entry : str = f"{id_name}_id_counter"
     new_id : int = int(get_data(entry)) + 1
     edit_data(entry, str(new_id))
@@ -196,23 +196,23 @@ def read_entry_database(cur:sqlite3.Cursor, table:str, target:str, columns:tuple
         print(f"{target} was not found, returned an empty tuple")
         return ()
 
-def get_ids(cur:sqlite3.Cursor, name : str, id_name:str)->tuple[int]:
+def get_ids(cur:sqlite3.Cursor, name : str, id_type:str)->tuple[int]:
     """Returns the ids of all objects matching a given name
 
     Args:
         cur (sqlite3.Cursor): cursor connected to CommandCoin$.db
         name (str): name of the object we are trying to find the id of
-        id_name (str): type of object, check the documentation
+        id_type (str): type of object, check the documentation
 
     Returns:
         tuple[int]: list of ids matching the same name, some object have unique names
     """
-    check_valid_id_name(id_name)
+    check_valid_id_type(id_type)
     #f"{id_name}s" is the table
     #f"{id_name}_id" is the column with the ids we are trying to find
     #("name") is the column containing the names
     # name is the target 
-    ids_str : tuple[str] = read_entry_database(cur, f"{id_name}s", f"{id_name}_id",("name",),(name,))
+    ids_str : tuple[str] = read_entry_database(cur, f"{id_type}s", f"{id_type}_id",("name",),(name,))
     ids = tuple(int(id_str) for id_str in ids_str)
     return ids
 

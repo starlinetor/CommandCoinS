@@ -20,7 +20,8 @@ def setup() -> None:
 @click.option('-v','--verbose', default=False, help='Increased debug information')
 def complete(directory:str, start_date:str, verbose:bool) -> None:
     """
-    Complete setup for CommandCoin$\n
+    \b
+    Complete setup for CommandCoin$
     It will wipe all old data
     """
     #execute all setups
@@ -38,7 +39,8 @@ def complete(directory:str, start_date:str, verbose:bool) -> None:
 @click.option('-v','--verbose', default=True, help='Increased debug information')
 def wipe_database(verbose:Boolean) -> None:
     """
-    [INTERNAL/DEBUG] use complete instead\n
+    \b
+    [INTERNAL/DEBUG] use complete instead
     Wipes the database
     """
     #wipe old files
@@ -58,7 +60,8 @@ def wipe_database(verbose:Boolean) -> None:
 @click.option('-v','--verbose', default=True, help='Increased debug information')
 def wipe_config(verbose:Boolean) -> None:
     """
-    [INTERNAL/DEBUG] use complete instead\n
+    \b
+    [INTERNAL/DEBUG] use complete instead
     Wipes the config file
     """
     try:
@@ -81,9 +84,10 @@ def wipe_config(verbose:Boolean) -> None:
 @click.option('-d','--start_date',type=click.DateTime(formats=["%Y-%m-%d"]), default=str(date.today()), help='Starting date (YYYY-MM-DD)')
 def config(directory:str, start_date:str) -> None:
     """
-    [INTERNAL/DEBUG] use complete instead\n
-    Creates Config database\n
-    Stores starting date and database directory\n
+    \b
+    [INTERNAL/DEBUG] use complete instead
+    Creates Config database
+    Stores starting date and database directory
     Will wipe old data and settings on the database
     """
     #database directory
@@ -116,8 +120,9 @@ def config(directory:str, start_date:str) -> None:
 @click.confirmation_option(prompt='This will wipe your Accounts, Wallets and expenses, are you sure?')
 def database() -> None:
     """
-    [INTERNAL/DEBUG] use complete instead\n
-    Creates database\n
+    \b
+    [INTERNAL/DEBUG] use complete instead
+    Creates database
     Will wipe old Accounts, Wallets and expenses
     """
     #open/create database and get cursor

@@ -5,9 +5,10 @@ import Commands.Utils.SQL as SQL
 @click.group()
 def accounts() -> None:
     """
-    Representation of one of your bank accounts\n
-    Holds information, settings and automation\n
-    You can create a wallets to track expenses\n
+    \b
+    Representation of one of your bank accounts
+    Holds information, settings and automation
+    You can create a wallets to track expenses
     """
     #Each account has a name, and Id, a list of wallets, and special rules
     #Create methods to check info on groups
@@ -17,8 +18,9 @@ def accounts() -> None:
 @accounts.command()
 @click.argument('name')
 def create(name:str) -> None:
-    """Creates a new account
-
+    """
+    \b
+    Creates a new account
     Args:
         name (str): name of the new account
     """
