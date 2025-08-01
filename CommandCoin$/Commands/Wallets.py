@@ -29,7 +29,7 @@ def create(name:str, account:str) -> None:
         SQL.add_entry_database(cur,"wallets", (account_id, wallet_id, name))
         conn.commit()
         conn.close()
-        click.echo(f"{name} account created successfully")
+        click.echo(f"{name} wallet created successfully")
     except sqlite3.IntegrityError as e:
         if "UNIQUE constraint failed:" in str(e):
             click.echo(f"A wallet with the following name already exists : {name}")
