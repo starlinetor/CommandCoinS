@@ -102,6 +102,7 @@ def config(directory:str, start_date:str) -> None:
     #remove old tables
     #create new tables
     #store data
+    #start_date.date() is used to remove the time
     cur.executescript(f"""
                 DROP TABLE IF EXISTS settings;
                 DROP TABLE IF EXISTS data;
@@ -109,7 +110,7 @@ def config(directory:str, start_date:str) -> None:
                 CREATE TABLE data(name TEXT PRIMARY KEY, value TEXT);
                 INSERT OR REPLACE INTO data VALUES
                 ('database_dir','{database_dir}'),
-                ('start_date','{start_date}'),
+                ('start_date','{start_date.date()}'),
                 ('account_id_counter','0'),
                 ('wallet_id_counter','0'),
                 ('date_id_counter','0'),

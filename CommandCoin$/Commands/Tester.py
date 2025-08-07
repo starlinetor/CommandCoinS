@@ -1,6 +1,8 @@
+import datetime
 import sqlite3
 import click
-import Commands.Utils.SQL  as SQL
+import Commands.Utils.SQL as SQL
+import Commands.Utils.Dates as Dates
 
 @click.group()
 def tester() -> None:
@@ -93,3 +95,13 @@ def get_ids(name:str, id_type : str):
     print(SQL.get_ids(cur,name, id_type))
     conn.commit()
     conn.close()
+
+@tester.group()
+def dates() -> None:
+    """Dates related testing"""
+    pass
+
+@dates.command()
+@click.argument("date", type=click.DateTime(formats=["%Y-%m-%d"]))
+def get_date_id(date:datetime.date):
+    click.echo(Dates.get_date_id(date.date()))
