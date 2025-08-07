@@ -4,7 +4,7 @@ import sqlite3
 config_dir : str = Path(__file__).parents[3] / "data\\Config.db"
 #list of objects that have an id
 #update as needed
-valid_ids : list[str] = ["account", "wallet", "date", "expense", "tag"]
+valid_ids : list[str] = ["account", "wallet","expense", "tag"]
 
 def get_setting(key:str) -> str:
     """Returns the value of a given setting
@@ -134,17 +134,20 @@ def check_valid_id_type(id_type:str)->None:
     if id_type not in valid_ids:
         raise ValueError(f"{id_type} is not a valid id\n valid ids : {valid_ids}")
 
-def get_new_id(id_name:str) -> int:
-    """Returns a new id for the specified object\n
+def get_new_id(id_type:str) -> int:
+    """Returns a new id for the specified type\n
     increments automatically ids
     Args:
-        id_name (str): name of the object which the id is for
+        id_type (str): type of id
+        example  : "account", "wallet","expense", "tag"
 
     Returns:
         int: new id for the object
     """
-    check_valid_id_type(id_name)
-    entry : str = f"{id_name}_id_counter"
+    check_valid_id_type(id_type)
+    #Other ids are incremental so you just need to add one and get a new one
+    #The format in the database for ids is {id_type}_id_counter
+    entry : str = f"{id_type}_id_counter"
     new_id : int = int(get_data(entry)) + 1
     edit_data(entry, str(new_id))
     return new_id

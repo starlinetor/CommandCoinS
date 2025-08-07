@@ -25,3 +25,10 @@ Similarly
 # CommandCoin$
 ## Accounts
 ## Wallets
+## Tags
+### Default Tags
+Some tags are added by default and used for different proposes
+- None :
+Used when no tag is entered
+- Transaction :
+Used when an expense transfers money between wallets

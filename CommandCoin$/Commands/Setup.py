@@ -1,11 +1,13 @@
 import os
 import sqlite3
 import time
-from xmlrpc.client import Boolean
 import click
+
 from datetime import date
 from pathlib import Path
+#TODO REWRITE THIS AS import Commands.Utils.SQL as SQL
 from Commands.Utils.SQL import *
+import Commands.Tags as Tags
 
 
 @click.group()
@@ -31,13 +33,14 @@ def complete(directory:str, start_date:str, verbose:bool) -> None:
     ctx.invoke(wipe_config, verbose=verbose)
     ctx.invoke(config, directory=directory, start_date=start_date)
     ctx.invoke(database)
+    ctx.invoke(default_tags)
     click.echo("Setup completed")
     
 
 @setup.command(hidden=True)
 @click.confirmation_option(prompt='This will wipe your database, are you sure?')
 @click.option('-v','--verbose', default=True, help='Increased debug information')
-def wipe_database(verbose:Boolean) -> None:
+def wipe_database(verbose:bool) -> None:
     """
     \b
     [INTERNAL/DEBUG] use complete instead
@@ -58,7 +61,7 @@ def wipe_database(verbose:Boolean) -> None:
 @setup.command(hidden=True)
 @click.confirmation_option(prompt='This will wipe your config file, are you sure?')
 @click.option('-v','--verbose', default=True, help='Increased debug information')
-def wipe_config(verbose:Boolean) -> None:
+def wipe_config(verbose:bool) -> None:
     """
     \b
     [INTERNAL/DEBUG] use complete instead
@@ -224,3 +227,17 @@ def database() -> None:
                 """)
     conn.commit()
     conn.close()           
+
+@setup.command(hidden=True)
+@click.option('-v', '--verbose', default=True, help = 'Increased debug information')
+def default_tags(verbose : bool)-> None: 
+    """
+    \b
+    [INTERNAL/DEBUG] use complete instead
+    Adds default tags to the database
+    """
+    ctx = click.get_current_context()
+    ctx.invoke(Tags.create, name = "None", description = "Used when no tag is entered", verbose = verbose)
+    ctx.invoke(Tags.create, name = "Transaction", description = "Used when an expense transfers money between wallets", verbose = verbose)
+
+

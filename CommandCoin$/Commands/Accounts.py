@@ -17,7 +17,8 @@ def accounts() -> None:
 
 @accounts.command()
 @click.argument('name')
-def create(name:str) -> None:
+@click.option("-v", "--verbose", default = True, help='Increased debug information')
+def create(name:str, verbose:bool) -> None:
     """
     \b
     Creates a new account
@@ -25,15 +26,18 @@ def create(name:str) -> None:
         name (str): name of the new account
     """
     try:
-        conn : sqlite3.Connection = sqlite3.connect(SQL.get_data("database_dir"))
-        cur : sqlite3.Cursor = conn.cursor()
-        account_id : int = SQL.get_new_id("account")
-        SQL.add_entry_database(cur,"accounts", (account_id, name))
-        conn.commit()
-        conn.close()
-        click.echo(f"{name} account created successfully")
+        with sqlite3.connect(SQL.get_data("database_dir")) as conn:
+            cur : sqlite3.Cursor = conn.cursor()
+            account_id : int = SQL.get_new_id("account")
+            SQL.add_entry_database(cur,"accounts", (account_id, name))
+            conn.commit()
+        if verbose : click.echo(f"{name} account created successfully")
     except sqlite3.IntegrityError as e:
-        if "UNIQUE constraint failed:" in str(e):
-            click.echo(f"An account with the following name already exists : {name}")
-        else : 
+        if verbose:
+            if "UNIQUE constraint failed:" in str(e):
+                click.echo(f"An account with the following name already exists : {name}")
+            else : 
+                click.echo(e)
+    except Exception as e :
+        if verbose: 
             click.echo(e)

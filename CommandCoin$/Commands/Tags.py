@@ -12,7 +12,8 @@ def tags() -> None:
 @tags.command()
 @click.argument("name")
 @click.argument("description")
-def create(name:str, description:str)->None:
+@click.option("-v", "--verbose", default = True, help='Increased debug information')
+def create(name:str, description:str, verbose:bool)->None:
     """
     \b
     Creates a new tag
@@ -22,15 +23,18 @@ def create(name:str, description:str)->None:
     """
     
     try:
-        conn : sqlite3.Connection = sqlite3.connect(SQL.get_data("database_dir"))
-        cur : sqlite3.Cursor = conn.cursor()
-        tag_id : int = SQL.get_new_id("tag")
-        SQL.add_entry_database(cur, "tags", (tag_id, name, description))
-        conn.commit()
-        conn.close()
-        click.echo(f"{name} tag created successfully")
+        with sqlite3.connect(SQL.get_data("database_dir")) as  conn :
+            cur : sqlite3.Cursor = conn.cursor()
+            tag_id : int = SQL.get_new_id("tag")
+            SQL.add_entry_database(cur, "tags", (tag_id, name, description))
+            conn.commit()
+        if verbose : click.echo(f"{name} tag created successfully")
     except sqlite3.IntegrityError as e:
-        if "UNIQUE constraint failed:" in str(e):
-            click.echo(f"A tag with the following name already exists : {name}")
-        else:
+        if verbose :
+            if "UNIQUE constraint failed:" in str(e):
+                click.echo(f"A tag with the following name already exists : {name}")
+            else:
+                click.echo(e)
+    except Exception as e :
+        if verbose: 
             click.echo(e)

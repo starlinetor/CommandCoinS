@@ -14,7 +14,8 @@ def wallets() -> None:
 @wallets.command()
 @click.argument('name')
 @click.argument('account')
-def create(name:str, account:str) -> None:
+@click.option("-v", "--verbose", default = True, help='Increased debug information')
+def create(name:str, account:str, verbose:bool) -> None:
     """Creates a new wallet
 
     Args:
@@ -22,16 +23,19 @@ def create(name:str, account:str) -> None:
         account (str) : name of the account
     """
     try:
-        conn : sqlite3.Connection = sqlite3.connect(SQL.get_data("database_dir"))
-        cur : sqlite3.Cursor = conn.cursor()
-        account_id : int = SQL.get_id(cur, account, "account")
-        wallet_id : int = SQL.get_new_id("wallet")
-        SQL.add_entry_database(cur,"wallets", (account_id, wallet_id, name))
-        conn.commit()
-        conn.close()
-        click.echo(f"{name} wallet created successfully")
+        with sqlite3.connect(SQL.get_data("database_dir")) as conn:
+            cur : sqlite3.Cursor = conn.cursor()
+            account_id : int = SQL.get_id(cur, account, "account")
+            wallet_id : int = SQL.get_new_id("wallet")
+            SQL.add_entry_database(cur,"wallets", (account_id, wallet_id, name))
+            conn.commit()
+        if verbose: click.echo(f"{name} wallet created successfully")
     except sqlite3.IntegrityError as e:
-        if "UNIQUE constraint failed:" in str(e):
-            click.echo(f"A wallet with the following name already exists : {name}")
-        else : 
+        if verbose: 
+            if "UNIQUE constraint failed:" in str(e):
+                click.echo(f"A wallet with the following name already exists : {name}")
+            else : 
+                click.echo(e)
+    except Exception as e :
+        if verbose: 
             click.echo(e)
