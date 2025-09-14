@@ -152,7 +152,7 @@ def get_new_id(id_type:str) -> int:
     edit_data(entry, str(new_id))
     return new_id
 
-def add_entry_database(cur:sqlite3.Cursor, table:str, entries:tuple[str]) -> None:
+def add_entry_database(cur:sqlite3.Cursor, table:str, entries:tuple) -> None:
     """Adds a new entry in a target database and table\n
     does not commit or close the connection
 
