@@ -2,12 +2,11 @@ import os
 import sqlite3
 import time
 import click
-
 from datetime import date
 from pathlib import Path
-#TODO REWRITE THIS AS import Commands.Utils.SQL as SQL
-from Commands.Utils.SQL import *
-import Commands.Tags as Tags
+import Commands.Utils.SQL as u_sql
+import Commands.Utils.Dates as u_dates
+import Commands.Tags as c_tags
 
 
 @click.group()
@@ -18,7 +17,7 @@ def setup() -> None:
 @setup.command()
 @click.confirmation_option(prompt='This will wipe your Config file and database, are you sure?')
 @click.option('-d','--directory', default=str(Path(__file__).parents[2] / "data"), help='Directory for database')
-@click.option('-d','--start_date',type=click.DateTime(formats=["%Y-%m-%d"]), default=str(date.today()), help='Starting date (YYYY-MM-DD)')
+@click.option('-d','--start_date',type=str, default=str(date.today()), help='Starting date (YYYY-MM-DD)')
 @click.option('-v','--verbose', default=False, help='Increased debug information')
 def complete(directory:str, start_date:str, verbose:bool) -> None:
     """
@@ -84,7 +83,7 @@ def wipe_config(verbose:bool) -> None:
 @setup.command(hidden=True)
 @click.confirmation_option(prompt='This will wipe your Config file data and settings, are you sure?')
 @click.option('-dir','--directory', default=str(Path(__file__).parents[2] / "data"), help='Directory for database')
-@click.option('-d','--start_date',type=click.DateTime(formats=["%Y-%m-%d"]), default=str(date.today()), help='Starting date (YYYY-MM-DD)')
+@click.option('-d','--start_date',type=str, default=str(date.today()), help='Starting date (YYYY-MM-DD)')
 def config(directory:str, start_date:str) -> None:
     """
     \b
@@ -93,6 +92,8 @@ def config(directory:str, start_date:str) -> None:
     Stores starting date and database directory
     Will wipe old data and settings on the database
     """
+    #validate date
+    Dates.validate_date(start_date) 
     #database directory
     database_dir : str = str(Path(directory) / "CommandCoin$.db")
     
@@ -110,7 +111,7 @@ def config(directory:str, start_date:str) -> None:
                 CREATE TABLE data(name TEXT PRIMARY KEY, value TEXT);
                 INSERT OR REPLACE INTO data VALUES
                 ('database_dir','{database_dir}'),
-                ('start_date','{start_date.date()}'),
+                ('start_date','{start_date}'),
                 ('account_id_counter','0'),
                 ('wallet_id_counter','0'),
                 ('date_id_counter','0'),
