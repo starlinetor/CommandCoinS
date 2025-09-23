@@ -26,10 +26,10 @@ def create(name:str, verbose:bool) -> None:
         name (str): name of the new account
     """
     try:
-        with sqlite3.connect(SQL.get_data("database_dir")) as conn:
+        with sqlite3.connect(u_sql.get_data("database_dir")) as conn:
             cur : sqlite3.Cursor = conn.cursor()
-            account_id : int = SQL.get_new_id("account")
-            SQL.add_entry_database(cur,"accounts", (account_id, name))
+            account_id : int = u_sql.get_new_id("account")
+            u_sql.add_entry_database(cur,"accounts", (account_id, name))
             conn.commit()
         if verbose : click.echo(f"{name} account created successfully")
     except sqlite3.IntegrityError as e:

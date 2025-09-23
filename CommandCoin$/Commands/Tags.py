@@ -23,10 +23,10 @@ def create(name:str, description:str, verbose:bool)->None:
     """
     
     try:
-        with sqlite3.connect(SQL.get_data("database_dir")) as  conn :
+        with sqlite3.connect(u_sql.get_data("database_dir")) as  conn :
             cur : sqlite3.Cursor = conn.cursor()
-            tag_id : int = SQL.get_new_id("tag")
-            SQL.add_entry_database(cur, "tags", (tag_id, name, description))
+            tag_id : int = u_sql.get_new_id("tag")
+            u_sql.add_entry_database(cur, "tags", (tag_id, name, description))
             conn.commit()
         if verbose : click.echo(f"{name} tag created successfully")
     except sqlite3.IntegrityError as e:

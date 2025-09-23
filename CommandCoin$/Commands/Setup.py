@@ -48,7 +48,7 @@ def wipe_database(verbose:bool) -> None:
     #wipe old files
     try:
         #remove old database
-        os.remove(get_data("database_dir"))
+        os.remove(u_sql.get_data("database_dir"))
     except (FileNotFoundError,sqlite3.OperationalError) as e:
         #File not found, not a problem
         if verbose:
@@ -68,7 +68,7 @@ def wipe_config(verbose:bool) -> None:
     """
     try:
         #Remove config database
-        os.remove(config_dir)
+        os.remove(u_sql.config_dir)
     except PermissionError as e:
         #exit the application if the file is open
         if verbose:
@@ -93,12 +93,12 @@ def config(directory:str, start_date:str) -> None:
     Will wipe old data and settings on the database
     """
     #validate date
-    Dates.validate_date(start_date) 
+    u_dates.validate_date(start_date) 
     #database directory
     database_dir : str = str(Path(directory) / "CommandCoin$.db")
     
     #open settings file and save data
-    conn : sqlite3.Connection = sqlite3.connect(config_dir) 
+    conn : sqlite3.Connection = sqlite3.connect(u_sql.config_dir) 
     cur : sqlite3.Cursor = conn.cursor()
     #remove old tables
     #create new tables
@@ -131,7 +131,7 @@ def database() -> None:
     Will wipe old Accounts, Wallets and expenses
     """
     #open/create database and get cursor
-    conn : sqlite3.Connection = sqlite3.connect(get_data("database_dir"))
+    conn : sqlite3.Connection = sqlite3.connect(u_sql.get_data("database_dir"))
     cur : sqlite3.Cursor = conn.cursor()
     #drop old tables
     cur.executescript("""
@@ -239,7 +239,7 @@ def default_tags(verbose : bool)-> None:
     Adds default tags to the database
     """
     ctx = click.get_current_context()
-    ctx.invoke(Tags.create, name = "None", description = "Used when no tag is entered", verbose = verbose)
-    ctx.invoke(Tags.create, name = "Transaction", description = "Used when an expense transfers money between wallets", verbose = verbose)
+    ctx.invoke(c_tags.create, name = "None", description = "Used when no tag is entered", verbose = verbose)
+    ctx.invoke(c_tags.create, name = "Transaction", description = "Used when an expense transfers money between wallets", verbose = verbose)
 
 
