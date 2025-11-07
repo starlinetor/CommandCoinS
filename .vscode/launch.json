@@ -17,8 +17,9 @@
             "name": "Python : Main",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/CommandCoin$/main.py",
+            "program": "${workspaceFolder}/CommandCoinS/main.py",
             "console": "integratedTerminal",
+            "args": ["tester", "dates", "get-date-id", "2026-05-21"],
             "justMyCode": true
         }
     ]

@@ -4,9 +4,9 @@ import time
 import click
 from datetime import date
 from pathlib import Path
-import Commands.Utils.SQL as u_sql
-import Commands.Utils.Dates as u_dates
-import Commands.Tags as c_tags
+from .Utils import SQL as u_sql
+from .Utils import Dates as u_dates
+from . import Tags as c_tags
 
 
 @click.group()

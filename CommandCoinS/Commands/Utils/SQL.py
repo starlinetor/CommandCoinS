@@ -1,7 +1,7 @@
 from pathlib import Path
 import sqlite3
 #software variables
-config_dir : str = Path(__file__).parents[3] / "data\\Config.db"
+config_dir : str = Path(__file__).parents[2] / "data\\Config.db"
 #list of objects that have an id
 #update as needed
 valid_ids : list[str] = ["account", "wallet","expense", "tag"]
@@ -58,10 +58,7 @@ def get_config(key:str, table:str) -> str:
         #Something went wrong, just close the connection and return nothing
         print(e)
         print(f"{key} was not found, returned an empty string")
-        conn.close()
         return ""
-    finally:
-        conn.close()
 
 def edit_settings(key:str, new_value:str) -> str:
     """

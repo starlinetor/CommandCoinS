@@ -1,9 +1,8 @@
 import datetime
-from email.policy import default
 import sqlite3
 import click
-import Commands.Utils.SQL as u_sql
-import Commands.Utils.Dates as u_dates
+from .Utils import SQL as u_sql
+from .Utils import Dates as u_dates
 
 @click.group()
 def expenses() -> None:

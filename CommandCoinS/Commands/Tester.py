@@ -1,8 +1,8 @@
 import datetime
 import sqlite3
 import click
-import Commands.Utils.SQL as u_sql
-import Commands.Utils.Dates as u_dates
+from .Utils import SQL as u_sql
+from .Utils import Dates as u_dates
 
 @click.group()
 def tester() -> None:
@@ -21,7 +21,6 @@ def print_test() -> None:
     r" \______  /\____/|__|_|  /__|_|  (____  /___|  /\____ |  \______  /\____/|__|___|  /_/ /__  / ",
     r"    \/             \/      \/     \/     \/      \/         \/               \/  \/   \/      ",
     ""]
-    
     click.echo("\n".join(string))
     click.echo("Font credits : https://github.com/Marak/asciimo/blob/master/fonts/Graffiti.flf")
 

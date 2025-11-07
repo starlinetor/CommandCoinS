@@ -1,6 +1,6 @@
 import sqlite3
 import click
-import Commands.Utils.SQL as u_sql
+from .Utils import SQL as u_sql
 
 @click.group()
 def tags() -> None:
