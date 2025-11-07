@@ -1,7 +1,7 @@
-from pathlib import Path
+import pathlib
 import sqlite3
 #software variables
-config_dir : str = Path(__file__).parents[2] / "data\\Config.db"
+config_dir : pathlib.Path = pathlib.Path(__file__).parents[2] / "data\\Config.db"
 #list of objects that have an id
 #update as needed
 valid_ids : list[str] = ["account", "wallet","expense", "tag"]
@@ -193,7 +193,7 @@ def read_entry_database(cur:sqlite3.Cursor, table:str, target:str, columns:tuple
         print(f"{target} was not found, returned an empty tuple")
         return ()
 
-def get_ids(cur:sqlite3.Cursor, name : str, id_type:str)->tuple[int]:
+def get_ids(cur:sqlite3.Cursor, name : str, id_type:str)->tuple[int,...]:
     """Returns the ids of all objects matching a given name
 
     Args:
@@ -226,7 +226,7 @@ def get_id(cur:sqlite3.Cursor, name : str, id_name:str)-> int:
     Returns:
         int: first matching id
     """
-    ids : tuple[int] = get_ids(cur, name, id_name)
+    ids : tuple[int,...] = get_ids(cur, name, id_name)
     if len(ids) == 0:
         raise sqlite3.IntegrityError(f"No {id_name} named {name} has been found")
     if len(ids) == 1:
