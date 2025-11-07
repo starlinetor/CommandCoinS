@@ -1,6 +1,6 @@
 import sqlite3
 import click
-import Commands.Utils.SQL as SQL
+from .Utils import SQL as u_sql
 
 @click.group()
 def wallets() -> None:
@@ -23,11 +23,11 @@ def create(name:str, account:str, verbose:bool) -> None:
         account (str) : name of the account
     """
     try:
-        with sqlite3.connect(SQL.get_data("database_dir")) as conn:
+        with sqlite3.connect(u_sql.get_data("database_dir")) as conn:
             cur : sqlite3.Cursor = conn.cursor()
-            account_id : int = SQL.get_id(cur, account, "account")
-            wallet_id : int = SQL.get_new_id("wallet")
-            SQL.add_entry_database(cur,"wallets", (account_id, wallet_id, name))
+            account_id : int = u_sql.get_id(cur, account, "account")
+            wallet_id : int = u_sql.get_new_id("wallet")
+            u_sql.add_entry_database(cur,"wallets", (account_id, wallet_id, name))
             conn.commit()
         if verbose: click.echo(f"{name} wallet created successfully")
     except sqlite3.IntegrityError as e:

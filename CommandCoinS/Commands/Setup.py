@@ -2,12 +2,11 @@ import os
 import sqlite3
 import time
 import click
-
-from datetime import date
-from pathlib import Path
-#TODO REWRITE THIS AS import Commands.Utils.SQL as SQL
-from Commands.Utils.SQL import *
-import Commands.Tags as Tags
+import datetime
+import pathlib 
+from .Utils import SQL as u_sql
+from .Utils import Dates as u_dates
+from . import Tags as c_tags
 
 
 @click.group()
@@ -17,8 +16,8 @@ def setup() -> None:
 
 @setup.command()
 @click.confirmation_option(prompt='This will wipe your Config file and database, are you sure?')
-@click.option('-d','--directory', default=str(Path(__file__).parents[2] / "data"), help='Directory for database')
-@click.option('-d','--start_date',type=click.DateTime(formats=["%Y-%m-%d"]), default=str(date.today()), help='Starting date (YYYY-MM-DD)')
+@click.option('-d','--directory', default=str(pathlib.Path(__file__).parents[2] / "data"), help='Directory for database')
+@click.option('-d','--start_date',type=str, default=str(datetime.date.today()), help='Starting date (YYYY-MM-DD)')
 @click.option('-v','--verbose', default=False, help='Increased debug information')
 def complete(directory:str, start_date:str, verbose:bool) -> None:
     """
@@ -49,7 +48,7 @@ def wipe_database(verbose:bool) -> None:
     #wipe old files
     try:
         #remove old database
-        os.remove(get_data("database_dir"))
+        os.remove(u_sql.get_data("database_dir"))
     except (FileNotFoundError,sqlite3.OperationalError) as e:
         #File not found, not a problem
         if verbose:
@@ -69,7 +68,7 @@ def wipe_config(verbose:bool) -> None:
     """
     try:
         #Remove config database
-        os.remove(config_dir)
+        os.remove(u_sql.config_dir)
     except PermissionError as e:
         #exit the application if the file is open
         if verbose:
@@ -83,8 +82,8 @@ def wipe_config(verbose:bool) -> None:
 
 @setup.command(hidden=True)
 @click.confirmation_option(prompt='This will wipe your Config file data and settings, are you sure?')
-@click.option('-dir','--directory', default=str(Path(__file__).parents[2] / "data"), help='Directory for database')
-@click.option('-d','--start_date',type=click.DateTime(formats=["%Y-%m-%d"]), default=str(date.today()), help='Starting date (YYYY-MM-DD)')
+@click.option('-dir','--directory', default=str(pathlib.Path(__file__).parents[2] / "data"), help='Directory for database')
+@click.option('-d','--start_date',type=str, default=str(datetime.date.today()), help='Starting date (YYYY-MM-DD)')
 def config(directory:str, start_date:str) -> None:
     """
     \b
@@ -93,11 +92,13 @@ def config(directory:str, start_date:str) -> None:
     Stores starting date and database directory
     Will wipe old data and settings on the database
     """
+    #validate date
+    u_dates.validate_date(start_date) 
     #database directory
-    database_dir : str = str(Path(directory) / "CommandCoin$.db")
+    database_dir : str = str(pathlib.Path(directory) / "CommandCoin$.db")
     
     #open settings file and save data
-    conn : sqlite3.Connection = sqlite3.connect(config_dir) 
+    conn : sqlite3.Connection = sqlite3.connect(u_sql.config_dir) 
     cur : sqlite3.Cursor = conn.cursor()
     #remove old tables
     #create new tables
@@ -110,7 +111,7 @@ def config(directory:str, start_date:str) -> None:
                 CREATE TABLE data(name TEXT PRIMARY KEY, value TEXT);
                 INSERT OR REPLACE INTO data VALUES
                 ('database_dir','{database_dir}'),
-                ('start_date','{start_date.date()}'),
+                ('start_date','{start_date}'),
                 ('account_id_counter','0'),
                 ('wallet_id_counter','0'),
                 ('date_id_counter','0'),
@@ -130,7 +131,7 @@ def database() -> None:
     Will wipe old Accounts, Wallets and expenses
     """
     #open/create database and get cursor
-    conn : sqlite3.Connection = sqlite3.connect(get_data("database_dir"))
+    conn : sqlite3.Connection = sqlite3.connect(u_sql.get_data("database_dir"))
     cur : sqlite3.Cursor = conn.cursor()
     #drop old tables
     cur.executescript("""
@@ -238,7 +239,7 @@ def default_tags(verbose : bool)-> None:
     Adds default tags to the database
     """
     ctx = click.get_current_context()
-    ctx.invoke(Tags.create, name = "None", description = "Used when no tag is entered", verbose = verbose)
-    ctx.invoke(Tags.create, name = "Transaction", description = "Used when an expense transfers money between wallets", verbose = verbose)
+    ctx.invoke(c_tags.create, name = "None", description = "Used when no tag is entered", verbose = verbose)
+    ctx.invoke(c_tags.create, name = "Transaction", description = "Used when an expense transfers money between wallets", verbose = verbose)
 
 

@@ -1,7 +1,0 @@
-click
-os
-sqlite3
-click
-datetime
-pathlib
-setuptools
