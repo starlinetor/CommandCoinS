@@ -117,10 +117,7 @@ def edit_config(key:str, new_value:str, table:str) -> str:
         #Something went wrong, just close the connection and return nothing
         print(e)
         print(f"{key} was not found, returned an empty string")
-        conn.close()
         return ""
-    finally:
-        conn.close()
 
 def check_valid_id_type(id_type:str)->None:
     """Checks if an id is valid. In the case is not trows an error. 
