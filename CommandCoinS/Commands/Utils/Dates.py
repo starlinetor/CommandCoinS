@@ -17,7 +17,12 @@ def get_date_id(date:datetime.date, start_date_str : str) -> int:
     return delta.days
 
 def validate_date(date_2_validate:str) -> datetime.date:
-    date : datetime.date = datetime.datetime.strptime(date_2_validate, "%Y-%m-%d").date()
+    try:
+        date : datetime.date = datetime.datetime.strptime(date_2_validate, "%Y-%m-%d").date()
+    except ValueError as e:
+        print(e)
+        print("Returned date 1-1-1")
+        return datetime.date(1,1,1)
     return date
 
 #tests
