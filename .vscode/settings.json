@@ -4,5 +4,6 @@
         "BBVA",
         "executescript",
         "Starlinetor"
-    ]
+    ],
+    "python.analysis.diagnosticMode": "workspace"
 }

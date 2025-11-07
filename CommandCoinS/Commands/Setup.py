@@ -2,8 +2,8 @@ import os
 import sqlite3
 import time
 import click
-from datetime import date
-from pathlib import Path
+import datetime
+import pathlib 
 from .Utils import SQL as u_sql
 from .Utils import Dates as u_dates
 from . import Tags as c_tags
@@ -16,8 +16,8 @@ def setup() -> None:
 
 @setup.command()
 @click.confirmation_option(prompt='This will wipe your Config file and database, are you sure?')
-@click.option('-d','--directory', default=str(Path(__file__).parents[2] / "data"), help='Directory for database')
-@click.option('-d','--start_date',type=str, default=str(date.today()), help='Starting date (YYYY-MM-DD)')
+@click.option('-d','--directory', default=str(pathlib.Path(__file__).parents[2] / "data"), help='Directory for database')
+@click.option('-d','--start_date',type=str, default=str(datetime.date.today()), help='Starting date (YYYY-MM-DD)')
 @click.option('-v','--verbose', default=False, help='Increased debug information')
 def complete(directory:str, start_date:str, verbose:bool) -> None:
     """
@@ -82,8 +82,8 @@ def wipe_config(verbose:bool) -> None:
 
 @setup.command(hidden=True)
 @click.confirmation_option(prompt='This will wipe your Config file data and settings, are you sure?')
-@click.option('-dir','--directory', default=str(Path(__file__).parents[2] / "data"), help='Directory for database')
-@click.option('-d','--start_date',type=str, default=str(date.today()), help='Starting date (YYYY-MM-DD)')
+@click.option('-dir','--directory', default=str(pathlib.Path(__file__).parents[2] / "data"), help='Directory for database')
+@click.option('-d','--start_date',type=str, default=str(datetime.date.today()), help='Starting date (YYYY-MM-DD)')
 def config(directory:str, start_date:str) -> None:
     """
     \b
@@ -95,7 +95,7 @@ def config(directory:str, start_date:str) -> None:
     #validate date
     u_dates.validate_date(start_date) 
     #database directory
-    database_dir : str = str(Path(directory) / "CommandCoin$.db")
+    database_dir : str = str(pathlib.Path(directory) / "CommandCoin$.db")
     
     #open settings file and save data
     conn : sqlite3.Connection = sqlite3.connect(u_sql.config_dir) 
