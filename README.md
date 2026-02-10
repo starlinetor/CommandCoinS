@@ -1,3 +1,6 @@
+# PROJECT DISCONTINUED
+The project has been discontinued and archived as GnuCash already did everything i wanted. 
+
 # Personal command line based finance tracker
 ```
 _________                                           .____________        .__         ____/\__ 
